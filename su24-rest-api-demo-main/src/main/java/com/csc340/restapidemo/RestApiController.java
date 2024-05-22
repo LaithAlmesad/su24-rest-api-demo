@@ -169,33 +169,29 @@ public class RestApiController {
     }
 
     /**
-     * Get weather information from the third-party weather stack API
+     * Get a random dog fact from Dog Facts API and make it available at our own API endpoint
      *
-     * @return The weather json response
+     * @return The dog fact JSON response
      */
-    @GetMapping("/weather")
-    public Object getWeather() {
+    @GetMapping("/dogfact")
+    public Object getRandomDogFact() {
         try {
-            String url = "https://api.weatherapi.com/v1/current.json?key=YOUR_API_KEY&q=London";
+            String url = "https://dog-api.kinduff.com/api/facts";
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper mapper = new ObjectMapper();
 
             // We are expecting a String object as a response from the above API.
-            String jsonWeather = restTemplate.getForObject(url, String.class);
-            JsonNode root = mapper.readTree(jsonWeather);
+            String jsonDogFact = restTemplate.getForObject(url, String.class);
+            JsonNode root = mapper.readTree(jsonDogFact);
 
             // Parse out the most important info from the response and use it for whatever you want. In this case, just print.
-            String location = root.get("location").get("name").asText();
-            String temperature = root.get("current").get("temp_c").asText();
-            String condition = root.get("current").get("condition").get("text").asText();
-            System.out.println("Location: " + location);
-            System.out.println("Temperature: " + temperature + "°C");
-            System.out.println("Condition: " + condition);
+            String dogFact = root.get("facts").get(0).asText();
+            System.out.println("Random Dog Fact: " + dogFact);
 
             return root;
         } catch (Exception ex) {
             Logger.getLogger(RestApiController.class.getName()).log(Level.SEVERE, null, ex);
-            return "error in /weather";
+            return "error in /dogfact";
         }
     }
 }
